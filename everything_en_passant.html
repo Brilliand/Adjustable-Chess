@@ -12,8 +12,8 @@ allowedMoves[6] = function(board, move, from, to) {
 	}
 };
 moveSideEffects[2] = function(board, move, oldBoard) {
-	if(board.enPassant && board.enPassant.tiles.includes(move.to)) {
-		delete board[board.enPassant.target];
+	if(oldBoard.enPassant && oldBoard.enPassant.tiles.includes(move.to)) {
+		delete board[oldBoard.enPassant.target];
 	}
 };
 
