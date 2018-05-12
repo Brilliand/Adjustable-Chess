@@ -1,0 +1,31 @@
+<html>
+<head>
+<link rel="stylesheet" href="board.css">
+<script src="core.js"></script>
+<script src="chess.js"></script>
+<script>
+allowedMoves[6] = function(board, move, from, to) {
+	if(from.piece.type == "pawn") {
+		if(from.piece.side == "white" && (to.row - from.row <= 0)) return false;
+		if(from.piece.side == "black" && (to.row - from.row >= 0)) return false;
+		if(Math.abs(to.col - from.col) == 1 && Math.abs(to.row - from.row) == 1) return board.enPassant && board.enPassant.tiles.includes(move.to);
+	}
+};
+moveSideEffects[2] = function(board, move, oldBoard) {
+	if(board.enPassant && board.enPassant.tiles.includes(move.to)) {
+		delete board[board.enPassant.target];
+	}
+};
+
+pieceValues.knight = function(space) {
+	if(space.col == 0) return 3.4;
+	if(space.col == (board.width - 1)) return 3.4;
+	if(space.row == 0) return 3.4;
+	if(space.row == (board.height - 1)) return 3.4;
+	return 3.5;
+};
+</script>
+</head>
+<body>
+</body>
+</html>
