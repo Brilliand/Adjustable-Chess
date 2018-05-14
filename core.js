@@ -117,7 +117,7 @@ Board.prototype.score = function() {
 	var score = 0;
 	for(var tile in this) {
 		var space = this.tile(tile);
-		if(space.isValid && space.piece && piecealues[space.piece.type]) {
+		if(space.isValid && space.piece && pieceValues[space.piece.type]) {
 			var value = pieceValues[space.piece.type];
 			if(value instanceof Function) value = value(space);
 			if(space.piece.side == this.turn) score += value;
