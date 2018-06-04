@@ -1,0 +1,100 @@
+<html>
+<head>
+<link rel="stylesheet" href="board.css">
+<style>
+.chessboard > tr > td.petrified {
+	background: rgb(213,213,213);
+}
+.chessboard > tr:nth-child(odd) td.petrified:nth-child(even),
+.chessboard > tr:nth-child(even) td.petrified:nth-child(odd) {
+	background: rgb(148,148,148);
+}
+</style>
+<script src="core.js"></script>
+<script src="chess.js"></script>
+<script>
+forbiddenMoves.push(function(board, move, from, to) {
+	if(from.piece.petrified) return true;
+});
+moveSideEffects.push(function(board, move, oldBoard) {
+	if(!(board[move.to])) return;
+
+	var to = board.tile(move.to);
+	var targets;
+	if(to.piece.side == "white") targets = [board.at(to.col-1,to.row+1), board.at(to.col+1,to.row+1)];
+	else if(to.piece.side == "black") targets = [board.at(to.col-1,to.row-1), board.at(to.col+1,to.row-1)];
+	else targets = [];
+
+	var thisPetrifies = (board[move.to].type == "pawn");
+	var thisPetrified = false;
+	targets.map(function(space) {
+		if(board[space] && board[space].side != to.piece.side) {
+			if(board[space].type == "pawn") thisPetrified = true;
+			if(thisPetrifies && !board[space].petrified) {
+				board[space] = Object.assign({}, board[space], {
+					petrified: true,
+				});
+			}
+		}
+	});
+	if(thisPetrified && !board[move.to].petrified) {
+		board[move.to] = Object.assign({}, board[move.to], {
+			petrified: true,
+		});
+	}
+})
+
+pieceValues.pawn = function(space) {
+	if(space.piece.petrified) return 0;
+	var distance = (space.piece.side == "black" ? space.row : (board.height - space.row - 1));
+	switch(distance) {
+	case 4: return 2.1;
+	case 3: return 2.2;
+	case 2: return 2.5;
+	case 1: return 3;
+	case 0: return 9;
+	default: return 2;
+	}
+},
+pieceValues.knight = function(space) {
+	if(space.piece.petrified) return 0;
+	if(space.col == 0) return 2.9;
+	if(space.col == (board.width - 1)) return 2.9;
+	if(space.row == 0) return 2.9;
+	if(space.row == (board.height - 1)) return 2.9;
+	return 3;
+};
+pieceValues.bishop = function(space) {
+	if(space.piece.petrified) return 0;
+	if(space.row == 0) return 2.9;
+	if(space.row == (board.height - 1)) return 2.9;
+	return 3;
+},
+pieceValues.rook = function(space) {
+	if(space.piece.petrified) return 0;
+	return 5;
+};
+pieceValues.queen = function(space) {
+	if(space.piece.petrified) return 0;
+	return 9;
+};
+pieceValues.king = function(space) {
+	if(space.piece.petrified) return 0;
+	return 3;
+};
+
+visibleBoard.updateDisplay = function(board) {
+	for(var k in this.grid) {
+		if(board[k]) {
+			this.grid[k].className = board[k].side + " " + board[k].type + (board[k].petrified ? " petrified" : "");
+		} else {
+			this.grid[k].className = "";
+		}
+	}
+	this.className = "chessboard " + board.turn + "tomove";
+}
+</script>
+</head>
+<body>
+</body>
+</html>
