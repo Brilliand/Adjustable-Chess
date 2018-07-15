@@ -1,0 +1,40 @@
+<html>
+<head>
+<link rel="stylesheet" href="board.css">
+<script src="core.js"></script>
+<script src="chess.js"></script>
+<script>
+forbiddenMoves.push(function(board, move, from, to) {
+	if(typeof board.isCheck === "undefined") {
+		board.isCheck = true;
+		board.isCheck = board.isMoveForbidden({from: "a1", to: "a1"});
+	}
+	if(typeof board.isEmptyFile === "undefined") {
+		board.isEmptyFile = true;
+		for(var i = 0; i < board.height; i++) {
+			var piece = board[board.at(board.nextfile, i)];
+			if(piece && piece.side == board.turn) {
+				board.isEmptyFile = false;
+				break;
+			}
+		}
+	}
+	if(board.isCheck || board.isEmptyFile) return false;
+	if(move.from == move.to) return true;
+	if(from.col == board.nextfile) return false;
+	return true;
+});
+moveSideEffects.push(function(board, move, oldBoard) {
+	if(oldBoard.turn == "black") {
+		board.nextfile = (oldBoard.nextfile + 1) % board.width;
+	}
+	delete board.isEmptyFile;
+	delete board.isCheck;
+});
+
+board.nextfile = 0;
+</script>
+</head>
+<body>
+</body>
+</html>
