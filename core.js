@@ -245,15 +245,24 @@ aiButton.addEventListener("click", function() {
 		}).pop();
 	}
 	var allMoves = board.getLegalMoves();
+	if(allMoves.length == 1) {
+		var move = allMoves[0];
+		console.log(move);
+
+		undoList.push(board);
+		board = board.afterMove(move);
+		visibleBoard.updateDisplay(board);
+		return;
+	}
 	var allowedTime = 5000 / allMoves.length;
 	var chosenMove = allMoves.map(function(move) {
 		var until = performance.now() + allowedTime;
 		var outcome;
 		var i = 2;
 		do {
-			outcome = alpha_beta(board.afterMove(move), 2);
+			outcome = alpha_beta(board.afterMove(move), i);
 			i++;
-		} while(performance.now() < until && outcome.moves.length > (i - 2));
+		} while(performance.now() < until);
 		return {
 			board: outcome.board,
 			moves: [move].concat(outcome.moves),

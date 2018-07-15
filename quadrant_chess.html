@@ -1,0 +1,17 @@
+<html>
+<head>
+<link rel="stylesheet" href="board.css">
+<script src="core.js"></script>
+<script src="chess.js"></script>
+<script>
+forbiddenMoves.push(function(board, move, from, to) {
+	if(to.piece) {
+		if((from.col & 4) != (to.col & 4)) return true;
+		if((from.row & 4) != (to.row & 4)) return true;
+	}
+});
+</script>
+</head>
+<body>
+</body>
+</html>

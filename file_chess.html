@@ -1,0 +1,30 @@
+<html>
+<head>
+<link rel="stylesheet" href="board.css">
+<script src="core.js"></script>
+<script src="chess.js"></script>
+<script>
+plausibleMoves[0] = function(board, move, from, to) {
+	return from.isValid
+	    && to.isValid
+	    && from.piece
+	    && from.piece.side == board.turn
+	    && !(to.piece && to.piece.side == board.turn)
+	    && from.col == board.nextfile;
+};
+moveSideEffects.push(function(board, move, oldBoard) {
+	if(oldBoard.turn == "black") {
+		var i = 1;
+		do {
+			board.nextfile = (oldBoard.nextfile + i) % 8;
+			i++;
+		} while(board.getLegalMoves().length > 0 && i <= 8);
+	}
+});
+
+board.nextfile = 0;
+</script>
+</head>
+<body>
+</body>
+</html>

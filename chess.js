@@ -134,7 +134,7 @@ pieceValues = {
 	pawn: function(space) {
 		var distance = (space.piece.side == "black" ? space.row : (board.height - space.row - 1));
 		switch(distance) {
-		case 2: return 1.1;
+		case 4: return 1.1;
 		case 3: return 1.5;
 		case 2: return 2;
 		case 1: return 3;

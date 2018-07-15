@@ -1,6 +1,15 @@
 <html>
 <head>
 <link rel="stylesheet" href="board.css">
+<style>
+.chessboard > tr > td.enpassant {
+	background: rgb(255, 68, 35);
+}
+.chessboard > tr:nth-child(odd) td.enpassant:nth-child(even),
+.chessboard > tr:nth-child(even) td.enpassant:nth-child(odd) {
+	background: rgb(255, 68, 35);
+}
+</style>
 <script src="core.js"></script>
 <script src="chess.js"></script>
 <script>
@@ -24,6 +33,18 @@ pieceValues.knight = function(space) {
 	if(space.row == (board.height - 1)) return 3.4;
 	return 3.5;
 };
+visibleBoard.updateDisplay = function(board) {
+	for(var k in this.grid) {
+		if(board[k]) {
+			this.grid[k].className = board[k].side + " " + board[k].type;
+		} else if(board.enPassant && board.enPassant.tiles.includes(k)) {
+			this.grid[k].className = "enpassant";
+		} else {
+			this.grid[k].className = "";
+		}
+	}
+	this.className = "chessboard " + board.turn + "tomove";
+}
 </script>
 </head>
 <body>

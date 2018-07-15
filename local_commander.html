@@ -1,0 +1,54 @@
+<html>
+<head>
+<link rel="stylesheet" href="board.css">
+<script src="core.js"></script>
+<script src="chess.js"></script>
+<script>
+forbiddenMoves.push(function(board, move, from, to) {
+	if(!from.piece || !from.piece.side) return false;
+	for(var x = -1; x <= 1; x++) {
+		for(var y = -1; y <= 1; y++) {
+			var tile = board.at(from.col+x, from.row+y);
+			var piece = board[tile];
+			if(piece && piece.side == from.piece.side && piece.type == "king") {
+				return false;
+			}
+		}
+	}
+	return true;
+});
+
+Board.prototype.score = function() {
+	var kingPositions = {};
+	for(var x = 0; x < this.width; x++) {
+		for(var y = 0; y < this.height; y++) {
+			var tile = this.at(x, y);
+			var piece = this[tile];
+			if(piece && piece.type == "king") {
+				kingPositions[piece.side] = {
+					col: x,
+					row: y,
+				};
+			}
+		}
+	}
+
+	var score = 0;
+	for(var tile in this) {
+		var space = this.tile(tile);
+		if(space.isValid && space.piece && pieceValues[space.piece.type]) {
+			var value = pieceValues[space.piece.type];
+			if(value instanceof Function) value = value(space);
+			if(space.piece.side == this.turn) score += value;
+			var dist = Math.max(Math.abs(space.col - kingPositions[space.piece.side].col), Math.abs(space.row - kingPositions[space.piece.side].row));
+			if(dist > 1) value *= 0.95;
+			else score -= value;
+		}
+	}
+	return score;
+};
+</script>
+</head>
+<body>
+</body>
+</html>

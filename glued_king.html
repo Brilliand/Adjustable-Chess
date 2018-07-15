@@ -1,0 +1,19 @@
+<html>
+<head>
+<link rel="stylesheet" href="board.css">
+<script src="core.js"></script>
+<script src="chess.js"></script>
+<script>
+plausibleMoves[0] = function(board, move, from, to) {
+	return from.isValid
+	    && to.isValid
+	    && from.piece
+	    && from.piece.side == board.turn
+	    && !(to.piece && to.piece.side == board.turn)
+	    && from.piece.type !== "king";
+};
+</script>
+</head>
+<body>
+</body>
+</html>
