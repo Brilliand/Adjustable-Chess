@@ -1,0 +1,68 @@
+<html>
+<head>
+<link rel="stylesheet" href="board.css">
+<style>
+.chessboard > tr > td.threatened {
+	background: rgb(213,0,0);
+}
+.chessboard > tr:nth-child(odd) td.threatened:nth-child(even),
+.chessboard > tr:nth-child(even) td.threatened:nth-child(odd) {
+	background: rgb(148,0,0);
+}
+</style>
+<script src="core.js"></script>
+<script src="chess.js"></script>
+<script>
+plausibleMoves[0] = function(board, move, from, to) {
+	return from.isValid
+	    && to.isValid
+	    && from.piece
+	    && (from.piece.side == board.turn || board.isNeutralCheck)
+	    && !(to.piece && to.piece.side == from.piece.side)
+	    && !board.threatenedPieces.includes(move.from);
+};
+moveSideEffects.push(function(board, move, oldBoard) {
+	board.threatenedPieces = [];
+	board.isNeutralCheck = true;
+
+	var threatenedPieces = [];
+	for(var from in board) {
+		var tile = board.tile(from);
+		if(!tile.isValid || !tile.piece) continue;
+		if(tile.piece.type == "pawn") continue;
+		if(board.isThreatened(from)) threatenedPieces.push(from);
+	}
+	board.threatenedPieces = threatenedPieces;
+
+	delete board.isNeutralCheck;
+});
+
+board.threatenedPieces = [];
+
+pieceValues.pawn = function(space) {
+	var distance = (space.piece.side == "black" ? space.row : (board.height - space.row - 1));
+	switch(distance) {
+	case 4: return 2.1;
+	case 3: return 2.2;
+	case 2: return 2.5;
+	case 1: return 3;
+	case 0: return 9;
+	default: return 2;
+	}
+};
+
+visibleBoard.updateDisplay = function(board) {
+	for(var k in this.grid) {
+		if(board[k]) {
+			this.grid[k].className = board[k].side + " " + board[k].type + (board.threatenedPieces.includes(k) ? " threatened" : "");
+		} else {
+			this.grid[k].className = "";
+		}
+	}
+	this.className = "chessboard " + board.turn + "tomove";
+}
+</script>
+</head>
+<body>
+</body>
+</html>

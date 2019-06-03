@@ -13,7 +13,7 @@ A chess engine designed to easily implement chess variants.
 * [Gentleman Chess](https://brilliand.github.io/Adjustable-Chess/gentleman_chess.html)
 * [Mano a Mano](https://brilliand.github.io/Adjustable-Chess/mano_a_mano.html)
 * [Mimic Pawns](https://brilliand.github.io/Adjustable-Chess/mimic_pawns.html)
-* [Potato Bug](https://brilliand.github.io/Adjustable-Chess/potato_bug.html)
+* [Potato Bug](https://brilliand.github.io/Adjustable-Chess/potato_bug.html) (*[Strict Version](https://brilliand.github.io/Adjustable-Chess/potato_bug_strict.html)*)
 * [Prosecutor](https://brilliand.github.io/Adjustable-Chess/prosecutor.html)
 * [Stacking Chess](https://brilliand.github.io/Adjustable-Chess/stacking_chess.html)
 * [Unique Chess](https://brilliand.github.io/Adjustable-Chess/unique_chess.html)
