@@ -1,0 +1,17 @@
+<html>
+<head>
+<link rel="stylesheet" href="board.css">
+<script src="core.js"></script>
+<script src="chess.js"></script>
+<script>
+forbiddenMoves.unshift(function(board, move, from, to) {
+	if(from.piece.type == "pawn" && to.piece) {
+		if(to.piece.type == "knight") return true;
+		if(to.piece.type == "bishop") return true;
+	}
+});
+</script>
+</head>
+<body>
+</body>
+</html>

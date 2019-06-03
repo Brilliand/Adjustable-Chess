@@ -9,3 +9,12 @@ A chess engine designed to easily implement chess variants.
 * [Glued King](https://brilliand.github.io/Adjustable-Chess/glued_king.html)
 * [Quadrant Chess](https://brilliand.github.io/Adjustable-Chess/quadrant_chess.html)
 * [Reverse Hermit](https://brilliand.github.io/Adjustable-Chess/local_commander.html)
+* [Decrepit Pawns](https://brilliand.github.io/Adjustable-Chess/decrepit_pawns.html)
+* [Gentleman Chess](https://brilliand.github.io/Adjustable-Chess/gentleman_chess.html)
+* [Mano a Mano](https://brilliand.github.io/Adjustable-Chess/mano_a_mano.html)
+* [Mimic Pawns](https://brilliand.github.io/Adjustable-Chess/mimic_pawns.html)
+* [Potato Bug](https://brilliand.github.io/Adjustable-Chess/potato_bug.html)
+* [Prosecutor](https://brilliand.github.io/Adjustable-Chess/prosecutor.html)
+* [Stacking Chess](https://brilliand.github.io/Adjustable-Chess/stacking_chess.html)
+* [Unique Chess](https://brilliand.github.io/Adjustable-Chess/unique_chess.html)
+

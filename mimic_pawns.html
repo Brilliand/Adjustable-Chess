@@ -1,0 +1,25 @@
+<html>
+<head>
+<link rel="stylesheet" href="board.css">
+<script src="core.js"></script>
+<script src="chess.js"></script>
+<script>
+forbiddenMoves.unshift(function(board, move, from, to) {
+	if(board.pawnForced && from.piece && from.piece.type != "pawn") {
+		return true;
+	}
+});
+moveSideEffects.push(function(board, move, oldBoard) {
+	var from = oldBoard.tile(move.from);
+	if(from.piece && from.piece.type == "pawn") {
+		if(typeof board.pawnForced === 'undefined') board.pawnForced = true;
+		else board.pawnForced = false;
+	} else {
+		delete board.pawnForced;
+	}
+});
+</script>
+</head>
+<body>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<html>
+<head>
+<link rel="stylesheet" href="board.css">
+<style>
+.white.amazon:after {
+	content: "\2655";
+}
+.white.amazon {
+	transform: rotate(180deg);
+}
+.black.amazon:after {
+	content: "\265B";
+}
+.black.amazon {
+	transform: rotate(180deg);
+}
+</style>
+<script src="core.js"></script>
+<script src="chess.js"></script>
+<script>
+
+plausibleMoves[0] = function(board, move, from, to) {
+	return from.isValid
+	    && to.isValid
+	    && from.piece
+	    && from.piece.side == board.turn
+	    && move.from != move.to;
+};
+allowedMoves[4] = function(board, move, from, to) {
+	if(from.piece.type == "pawn") {
+		if(from.piece.side == "white" && (to.row - from.row <= 0)) return false;
+		if(from.piece.side == "black" && (to.row - from.row >= 0)) return false;
+		if(to.col == from.col && from.row == 1 && to.row == 3) return board.path(move).empty && (!to.piece || to.piece.side == from.piece.side);
+		if(to.col == from.col && from.row == (board.height - 2) && to.row == (board.height - 4)) return board.path(move).empty && (!to.piece || to.piece.side == from.piece.side);
+		if(to.col == from.col && Math.abs(to.row - from.row) == 1) return (!to.piece || to.piece.side == from.piece.side);
+		if(Math.abs(to.col - from.col) == 1 && Math.abs(to.row - from.row) == 1) return to.piece;
+	}
+};
+forbiddenMoves[0] = function(board, move, from, to) {
+	var newBoard = board.afterMove(move);
+	var kingTile;
+	for(var x = 0; x < newBoard.width; x++) {
+		for(var y = 0; y < newBoard.height; y++) {
+			var tile = newBoard.at(x, y);
+			var piece = newBoard.tile(tile).piece;
+			if(piece && piece.side == board.turn && piece.type == "king") {
+				if(kingTile) return false;
+				kingTile = tile;
+			}
+		}
+	}
+	if(!kingTile) return true;
+	return newBoard.isThreatened(kingTile);
+};
+moveSideEffects.push(function(board, move, oldBoard) {
+	var moved = board[move.to];
+	var captured = oldBoard[move.to];
+	if(moved && moved.promotedFrom && !moved.stack) {
+		moved.stack = moved.promotedFrom.stack;
+	}
+	if(moved.stack && !board[move.from]) {
+		var stack = moved.stack;
+		for(var i = 0; i < stack.length; i++) {
+			if(stack[i].side == moved.side) {
+				var topStack = stack.slice(0, i);
+				var freed = stack[i];
+				var bottomStack = stack.slice(i+1);
+				board[move.to] = moved = Object.assign({}, moved, { stack: topStack });
+				board[move.from] = Object.assign({}, freed, { stack: bottomStack });
+				break;
+			}
+		}
+	}
+	if(moved && captured) {
+		var stackEntry = Object.assign({}, captured);
+		delete stackEntry.stack;
+		var newStack = (moved.stack || []).concat([stackEntry], captured.stack || []);
+		board[move.to] = moved = Object.assign({}, moved, { stack: newStack });
+	}
+})
+
+Board.prototype.score = function() {
+	var score = 0;
+	for(var tile in this) {
+		var space = this.tile(tile);
+		if(space.isValid && space.piece && pieceValues[space.piece.type]) {
+			var value = pieceValues[space.piece.type];
+			if(value instanceof Function) value = value(space);
+			if(space.piece.stack) value += space.piece.stack.length;
+			if(space.piece.side == this.turn) score += value;
+			else score -= value;
+		}
+	}
+	return score;
+};
+
+visibleBoard.updateDisplay = function(board) {
+	for(var k in this.grid) {
+		if(board[k]) {
+			this.grid[k].className = board[k].side + " " + board[k].type + (board[k].petrified ? " petrified" : "");
+			this.grid[k].title = [board[k]].concat(board[k].stack || []).map(piece => [piece.side, piece.type].concat(piece.promotesTo ? ["("+piece.promotesTo+")"] : []).join(" ")).join("|");
+		} else {
+			this.grid[k].className = "";
+			this.grid[k].title = "";
+		}
+	}
+	this.className = "chessboard " + board.turn + "tomove";
+}
+
+// Special pawn promotion
+for(var i = 0; i < board.width; i++) {
+	board[board.at(i, 6)].promotesTo = board[board.at(i, 7)].type;
+	if(board[board.at(i, 6)].promotesTo == "king") board[board.at(i, 6)].promotesTo = "amazon";
+	board[board.at(i, 1)].promotesTo = board[board.at(i, 0)].type;
+	if(board[board.at(i, 1)].promotesTo == "king") board[board.at(i, 1)].promotesTo = "amazon";
+}
+moveSideEffects[4] = function(board, move, oldBoard) {
+	var to = board.tile(move.to);
+	if(to.piece && to.piece.promotesTo && (to.row == 0 || to.row == board.height - 1)) {
+		var promotedPiece = Object.assign({}, to.piece, {
+			type: to.piece.promotesTo,
+			promotedFrom: to.piece,
+		});
+		delete promotedPiece.promotesTo;
+		board[move.to] = promotedPiece;
+	}
+};
+allowedMoves.push(function(board, move, from, to) {
+	if(from.piece.type == "amazon") {
+		return (Math.abs(from.col - to.col) * Math.abs(from.row - to.row) == 2)
+		    || (Math.abs(from.col - to.col) == Math.abs(from.row - to.row) && board.path(move).empty)
+		    || (((from.col == to.col) || (from.row == to.row)) && board.path(move).empty);
+	}
+});
+pieceValues["amazon"] = 12;
+</script>
+</head>
+<body>
+</body>
+</html>

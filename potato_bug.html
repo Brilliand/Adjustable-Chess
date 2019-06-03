@@ -1,0 +1,18 @@
+<html>
+<head>
+<link rel="stylesheet" href="board.css">
+<script src="core.js"></script>
+<script src="chess.js"></script>
+<script>
+forbiddenMoves.push(function(board, move, from, to) {
+	if(!from.piece || !from.piece.side) return false;
+	if(from.piece.type == "pawn") return false;
+
+	var newBoard = board.afterMove({from: "a1", to: "a1"});
+	return newBoard.isThreatened(move.from);
+});
+</script>
+</head>
+<body>
+</body>
+</html>

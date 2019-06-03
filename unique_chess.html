@@ -1,0 +1,22 @@
+<html>
+<head>
+<link rel="stylesheet" href="board.css">
+<script src="core.js"></script>
+<script src="chess.js"></script>
+<script>
+forbiddenMoves.unshift(function(board, move, from, to) {
+	if(!from.piece || move.from == move.to) return false;
+	return board.disallowedTypes.includes(from.piece.type);
+});
+moveSideEffects.push(function(board, move, oldBoard) {
+	var from = oldBoard.tile(move.from);
+	if(from.piece) {
+		board.disallowedTypes = [from.piece.type, board.disallowedTypes[0]];
+	}
+});
+board.disallowedTypes = [];
+</script>
+</head>
+<body>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<html>
+<head>
+<link rel="stylesheet" href="board.css">
+<script src="core.js"></script>
+<script src="chess.js"></script>
+<script>
+forbiddenMoves.unshift(function(board, move, from, to) {
+	if(!from.piece || !to.piece || move.from == move.to) return false;
+	for(var tile in board) {
+		if(tile == move.from || tile == move.to) continue;
+		var threat = { from: tile, to: move.to };
+		if(board.isMoveAllowed(threat)) return true;
+	}
+	return false;
+});
+
+pieceValues.pawn = 1;
+
+pieceValues.queen = function(space) {
+	var value = 9;
+
+	for(var x = 0; x < board.width; x++) {
+		for(var y = 0; y < board.height; y++) {
+			var tile = board.at(x, y);
+			var piece = board[tile];
+			if(piece && piece.type == "king" && piece.side != space.piece.side) {
+				value += 9 - Math.max(Math.abs(x - space.col), Math.abs(y - space.row));
+			}
+		}
+	}
+
+	if(space.col == 0
+	|| space.col == (board.width - 1)
+	|| space.row == 0
+	|| space.row == (board.height - 1)) value *= 0.9;
+
+	return value;
+};
+</script>
+</head>
+<body>
+</body>
+</html>

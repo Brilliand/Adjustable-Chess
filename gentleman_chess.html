@@ -1,0 +1,23 @@
+<html>
+<head>
+<link rel="stylesheet" href="board.css">
+<script src="core.js"></script>
+<script src="chess.js"></script>
+<script>
+forbiddenMoves.unshift(function(board, move, from, to) {
+	return move.to == board.untargetable;
+});
+moveSideEffects.push(function(board, move, oldBoard) {
+	if(oldBoard[move.to]) delete board.untargetable;
+	else board.untargetable = move.to;
+});
+
+// No en passant
+delete allowedMoves[6];
+delete moveSideEffects[1];
+delete moveSideEffects[2];
+</script>
+</head>
+<body>
+</body>
+</html>

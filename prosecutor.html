@@ -1,0 +1,101 @@
+<html>
+<head>
+<link rel="stylesheet" href="board.css">
+<style>
+.chessboard > tr > td.controlled {
+	text-shadow: 0px 0px 5px #f00;
+}
+</style>
+<script src="core.js"></script>
+<script src="chess.js"></script>
+<script>
+Board.prototype.getLegalMoves = function() {
+	var legalMoves = [];
+	for(var from in this) {
+		var piece = this[from];
+		if(piece && piece.side) {
+			for(var x = 0; x < this.width; x++) {
+				for(var y = 0; y < this.height; y++) {
+					var to = this.at(x, y);
+					var move = { from: from, to: to };
+					if(this.isMoveAllowed(move) && !this.isMoveForbidden(move)) legalMoves.push(move);
+				}
+			}
+		}
+	}
+	return legalMoves;
+};
+
+plausibleMoves[0] = function(board, move, from, to) {
+	var controlTurn = board.controlTarget || board.turn;
+
+	return from.isValid
+	    && to.isValid
+	    && from.piece
+	    && from.piece.side == controlTurn
+	    && !(to.piece && to.piece.side == from.piece.side);
+};
+forbiddenMoves[0] = function(board, move, from, to) {
+	var controlTurn = board.controlTarget || board.turn;
+
+	var newBoard = board.afterMove(move);
+	var kingTile;
+	for(var x = 0; x < newBoard.width; x++) {
+		for(var y = 0; y < newBoard.height; y++) {
+			var tile = newBoard.at(x, y);
+			var piece = newBoard.tile(tile).piece;
+			if(piece && piece.side == controlTurn && piece.type == "king") {
+				if(kingTile) return false;
+				kingTile = tile;
+			}
+		}
+	}
+	return newBoard.isThreatened(kingTile);
+};
+moveSideEffects.push(function(board, move, oldBoard) {
+	var oldTurn = oldBoard.controlTarget || oldBoard.turn;
+	if(oldTurn == "white") board.turn = "black";
+	if(oldTurn == "black") board.turn = "white";
+	delete board.controlTarget;
+
+	var kingTile;
+	for(var x = 0; x < board.width; x++) {
+		for(var y = 0; y < board.height; y++) {
+			var tile = board.at(x, y);
+			var piece = board.tile(tile).piece;
+			if(piece && piece.side == board.turn && piece.type == "king") {
+				if(kingTile) return;
+				kingTile = tile;
+			}
+		}
+	}
+
+	var newTurn = board.turn;
+	board.turn = oldTurn;
+	if(board.isThreatened(kingTile)) {
+		board.controlTarget = newTurn;
+	} else {
+		board.turn = newTurn;
+	}
+});
+
+pieceValues.king = function(space) {
+	if(space.piece.side == board.controlTarget) return -10;
+	return 0;
+};
+
+visibleBoard.updateDisplay = function(board) {
+	for(var k in this.grid) {
+		if(board[k]) {
+			this.grid[k].className = board[k].side + " " + board[k].type + (board[k].side == board.controlTarget ? " controlled" : "");
+		} else {
+			this.grid[k].className = "";
+		}
+	}
+	this.className = "chessboard " + board.turn + "tomove";
+}
+</script>
+</head>
+<body>
+</body>
+</html>
